@@ -1,6 +1,6 @@
 const http = require('http')
 
-const { getProducts, getProduct, createProduct, updateProduct } = require('./controllers/productController')
+const { getProducts, getProduct, createProduct, updateProduct, deleteProduct } = require('./controllers/productController')
 
 const server = http.createServer((req, res) => {
 
@@ -14,7 +14,8 @@ const server = http.createServer((req, res) => {
         const id = req.url.split('/')[3]
         
         req.method === 'GET' ? getProduct(req, res, id) :
-        req.method === 'PUT' && updateProduct(req, res, id)
+        req.method === 'PUT' ? updateProduct(req, res, id) :
+        req.method === 'DELETE' && deleteProduct(req, res, id)
 
     } else {
 
