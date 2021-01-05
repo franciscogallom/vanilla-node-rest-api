@@ -5,7 +5,7 @@ const Product = require('../models/productModel')
 async function getProducts(req, res){
     try {
         const products = await Product.findAll()
-        res.writeHeader(200, { 'Content-Type': 'application/json' })
+        res.writeHead(200, { 'Content-Type': 'application/json' })
         res.end(JSON.stringify(products))
     } catch (error) {
         console.log(error)
@@ -18,10 +18,10 @@ async function getProduct(req, res, id){
     try {
         const product = await Product.findByID(id)
         if(product){
-            res.writeHeader(200, { 'Content-Type': 'application/json' })
+            res.writeHead(200, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify(product))
         } else {
-            res.writeHeader(400, { 'Content-Type': 'application/json' })
+            res.writeHead(400, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ message: 'Product not found :(' }))
         }
     } catch (error) {
@@ -29,7 +29,24 @@ async function getProduct(req, res, id){
     }
 }
 
+// @desc    Create a product.
+// route    POST /api/products
+async function createProduct(req, res){
+    try {
+        const product = {
+            title: 'Test createProduct',
+            price: 100
+        }
+        const newProduct = await Product.create(product)
+        res.writeHead(201, ({ 'Content-Type': 'application/json' }))
+        return res.end(JSON.stringify(newProduct))
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 module.exports = {
     getProducts,
-    getProduct
+    getProduct,
+    createProduct
 }
