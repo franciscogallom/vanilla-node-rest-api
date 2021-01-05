@@ -6,9 +6,11 @@ const { getPostData } = require('../utils')
 // route    GET /api/products
 async function getProducts(req, res){
     try {
+    
         const products = await Product.findAll()
         res.writeHead(200, { 'Content-Type': 'application/json' })
         res.end(JSON.stringify(products))
+    
     } catch (error) {
         console.log(error)
     }
@@ -19,13 +21,16 @@ async function getProducts(req, res){
 async function getProduct(req, res, id){
     try {
         const product = await Product.findByID(id)
+    
         if(product){
             res.writeHead(200, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify(product))
+    
         } else {
             res.writeHead(400, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ message: 'Product not found :(' }))
         }
+    
     } catch (error) {
         console.log(error)
     }
@@ -43,9 +48,47 @@ async function createProduct(req, res){
             title,
             price
         }
+        
         const newProduct = await Product.create(product)
+        
         res.writeHead(201, ({ 'Content-Type': 'application/json' }))
         return res.end(JSON.stringify(newProduct))
+    
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+// @desc    Update a product.
+// route    PUT /api/products/:id
+async function updateProduct(req, res, id){
+    try {
+
+        const product = Product.findByID(id)
+
+        if(product){
+
+            const body = await getPostData(req) 
+
+            console.log(body)
+
+            const { title, price } = JSON.parse(body)
+    
+            const productData = {
+                title: title || product.title,
+                price: price || product.price
+            }
+
+            const updateProduct = await Product.update(id, productData)
+            
+            res.writeHead(200, ({ 'Content-Type': 'application/json' }))
+            return res.end(JSON.stringify(updateProduct))
+        
+        } else {
+            res.writeHead(404, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ message: 'Product not found :(' }))
+        }
+    
     } catch (error) {
         console.log(error)
     }
@@ -54,5 +97,6 @@ async function createProduct(req, res){
 module.exports = {
     getProducts,
     getProduct,
-    createProduct
+    createProduct,
+    updateProduct
 }
